@@ -214,3 +214,20 @@ resource "azurerm_availability_set" "app_set" {
 }
 
 
+# Creating Storage Account, Container and Blob
+resource "azurerm_storage_account" "tfstate" {
+  name                     = "tfstate98145185f"
+  resource_group_name      = local.resource_group
+  location                 = local.location
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+}
+
+resource "azurerm_storage_container" "tfstate" {
+  name                  = "btfstate"
+  storage_account_name  = azurerm_storage_account.tfstate.name
+  container_access_type = "blob"
+  depends_on = [
+    azurerm_storage_account.tfstate
+  ]
+}
