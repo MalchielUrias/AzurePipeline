@@ -5,7 +5,7 @@
 
 
 trigger: 
-    - none
+- none
 
 variables:
     IISWebsiteName: "AzureTestProject"
@@ -18,49 +18,49 @@ resources:
           branch: "master"
           
 stages:
-    - stage: Deploy Website
+    - stage: DeployWebsite
       displayName: "Deploy Website"
       pool:
         vmImage: windows-latest
 
       jobs:
       - deployment: DeployWebsite
-      displayName: "Deploy Website"
-      environment: "Windows Server.app-windows-vm"
-      strategy:
-        runOnce:
-            deploy:
-                steps:
-                    - checkout: none
+        displayName: "Deploy Website"
+        environment: "Windows Server.app-windows-vm"
+        strategy:
+          runOnce:
+              deploy:
+                  steps:
+                      - checkout: none
 
-                    - download: "buildPipeline"
-                      name: 'DownloadBuildArtifacts'
-                      displayName: 'Download Build Artifacts'
-                      artifact: "TestProject"
+                      - download: "buildPipeline"
+                        name: 'DownloadBuildArtifacts'
+                        displayName: 'Download Build Artifacts'
+                        artifact: "TestProject"
 
-                    - task: IISWebAppManagementOnMachineGroup@0
-                      name: "StopIIS"
-                      displayName: "Stop IIS Website"
-                      inputs:
-                        IISDeploymentType: 'IISWebsite'
-                        ActionIISWebsite: 'StopWebsite'
-                        StartStopWebsiteName: '${{ variables.IISWebsiteName }}'
+                      - task: IISWebAppManagementOnMachineGroup@0
+                        name: "StopIIS"
+                        displayName: "Stop IIS Website"
+                        inputs:
+                          IISDeploymentType: 'IISWebsite'
+                          ActionIISWebsite: 'StopWebsite'
+                          StartStopWebsiteName: '${{ variables.IISWebsiteName }}'
 
-                    - task: IISWebAppDeploymentOnMachineGroup@0
-                      name: "DeployIIS"
-                      displayName: "Deploy IIS Website"
-                      inputs:
-                        WebSiteName: '{{ variables.IISWebsiteName }}'
-                        Package: '$(Pipeline.Workspace)\buildPipeline\AzureTestProject\RoundTheCode.AzureTestProject'
-                        TakeAppOfflineFlag: true
+                      - task: IISWebAppDeploymentOnMachineGroup@0
+                        name: "DeployIIS"
+                        displayName: "Deploy IIS Website"
+                        inputs:
+                          WebSiteName: '{{ variables.IISWebsiteName }}'
+                          Package: '$(Pipeline.Workspace)\buildPipeline\AzureTestProject\RoundTheCode.AzureTestProject'
+                          TakeAppOfflineFlag: true
 
-                    - task: IISWebAppManagementOnMachineGroup@0
-                      name: "StartIIS"
-                      displayName: "Start IIS Website"
-                      inputs:
-                        IISDeploymentType: 'IISWebsite'
-                        ActionIISWebsite: 'StartWebsite'
-                        StartStopWebsiteName: '{{ variables.IISWebsiteName }}'
+                      - task: IISWebAppManagementOnMachineGroup@0
+                        name: "StartIIS"
+                        displayName: "Start IIS Website"
+                        inputs:
+                          IISDeploymentType: 'IISWebsite'
+                          ActionIISWebsite: 'StartWebsite'
+                          StartStopWebsiteName: '{{ variables.IISWebsiteName }}'
 
-                    
+                      
 
