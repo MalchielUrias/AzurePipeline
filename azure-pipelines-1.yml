@@ -4,3 +4,63 @@
 # https://aka.ms/yaml
 
 
+trigger: 
+    - none
+
+variables:
+    IISWebsiteName: "AzureTestProject"
+
+resources:
+    pipelines:
+        - pipeline: 'buildPipeline'
+          project: "Azure VM Deployment Pipeline"
+          source: "Azure VM Build Pipeline"
+          branch: "master"
+          
+stages:
+    - stage: Deploy Website
+      displayName: "Deploy Website"
+      pool:
+        vmImage: windows-latest
+
+      jobs:
+      - deployment: DeployWebsite
+      displayName: "Deploy Website"
+      environment: "Windows Server.app-windows-vm"
+      strategy:
+        runOnce:
+            deploy:
+                steps:
+                    - checkout: none
+
+                    - download: "buildPipeline"
+                      name: 'DownloadBuildArtifacts'
+                      displayName: 'Download Build Artifacts'
+                      artifact: "TestProject"
+
+                    - task: IISWebAppManagementOnMachineGroup@0
+                      name: "StopIIS"
+                      displayName: "Stop IIS Website"
+                      inputs:
+                        IISDeploymentType: 'IISWebsite'
+                        ActionIISWebsite: 'StopWebsite'
+                        StartStopWebsiteName: '${{ variables.IISWebsiteName }}'
+
+                    - task: IISWebAppDeploymentOnMachineGroup@0
+                      name: "DeployIIS"
+                      displayName: "Deploy IIS Website"
+                      inputs:
+                        WebSiteName: '{{ variables.IISWebsiteName }}'
+                        Package: '$(Pipeline.Workspace)\buildPipeline\AzureTestProject\RoundTheCode.AzureTestProject'
+                        TakeAppOfflineFlag: true
+
+                    - task: IISWebAppManagementOnMachineGroup@0
+                      name: "StartIIS"
+                      displayName: "Start IIS Website"
+                      inputs:
+                        IISDeploymentType: 'IISWebsite'
+                        ActionIISWebsite: 'StartWebsite'
+                        StartStopWebsiteName: '{{ variables.IISWebsiteName }}'
+
+                    
+
