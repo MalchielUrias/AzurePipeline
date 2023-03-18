@@ -128,7 +128,7 @@ resource "azurerm_network_interface" "app_interface" {
 
 # Creating a Key Vault for Keys and Parameters
 resource "azurerm_key_vault" "app_vault" {
-  name                        = "app-vault55818168"
+  name                        = "app-vault51875"
   location                    = local.location
   resource_group_name         = local.resource_group
   enabled_for_disk_encryption = true
@@ -143,7 +143,7 @@ resource "azurerm_key_vault" "app_vault" {
     object_id = data.azurerm_client_config.current.object_id
 
     key_permissions = [
-      "Get",
+      "Get", "List"
     ]
 
     secret_permissions = [
@@ -160,7 +160,7 @@ resource "azurerm_key_vault" "app_vault" {
 }
 
 # Secret in the Key Value
-resource "azurerm_key_vault_secret" "vmpassword" {
+resource "azurerm_key_vault_secret" "vm_password" {
   name = "vmpassword"
   value = "Azure@123"
   key_vault_id = azurerm_key_vault.app_vault.id
@@ -176,7 +176,7 @@ resource "azurerm_windows_virtual_machine" "app-windows-vm" {
   location            = local.location
   size                = "Standard_D2s_v3"
   admin_username      = "adminuser"
-  admin_password      = azurerm_key_vault_secret.vmpassword.value
+  admin_password      = azurerm_key_vault_secret.vm_password.value
   availability_set_id = azurerm_availability_set.app_set.id
   network_interface_ids = [
     azurerm_network_interface.app_interface.id,
@@ -197,7 +197,7 @@ resource "azurerm_windows_virtual_machine" "app-windows-vm" {
   depends_on = [
     azurerm_network_interface.app_interface,
     azurerm_availability_set.app_set,
-    azurerm_key_vault_secret.vmpassword
+    azurerm_key_vault_secret.vm_password
   ]
 }
 
@@ -221,6 +221,9 @@ resource "azurerm_storage_account" "tfstate" {
   location                 = local.location
   account_tier             = "Standard"
   account_replication_type = "GRS"
+  depends_on = [
+   azurerm_resource_group.application_grp
+  ]
 }
 
 resource "azurerm_storage_container" "tfstate" {
@@ -231,3 +234,20 @@ resource "azurerm_storage_container" "tfstate" {
     azurerm_storage_account.tfstate
   ]
 }
+
+resource "azurerm_virtual_machine_extension" "vm_extension_install_iis" {
+  name                       = "vm_extension_install_iis"
+  virtual_machine_id         = azurerm_windows_virtual_machine.app-windows-vm.id
+  publisher                  = "Microsoft.Compute"
+  type                       = "CustomScriptExtension"
+  type_handler_version       = "1.8"
+  auto_upgrade_minor_version = true
+
+  settings = <<SETTINGS
+    {
+        "commandToExecute": "powershell -ExecutionPolicy Unrestricted Install-WindowsFeature -Name Web-Server -IncludeAllSubFeature -IncludeManagementTools"
+    }
+  SETTINGS
+  
+}
+
