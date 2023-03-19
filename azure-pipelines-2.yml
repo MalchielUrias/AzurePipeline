@@ -7,8 +7,8 @@ trigger:
 - none
 
 pool:
-  # vmImage: "windows-latest"
-  name: "azuredevops-vmss"
+  vmImage: "windows-latest"
+  # name: "azuredevops-vmss"
 
 variables:
   buildPlatform: 'Any CPU'
