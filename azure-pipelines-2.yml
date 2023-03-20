@@ -7,8 +7,8 @@ trigger:
 - none
 
 pool:
-  # vmImage: "windows-latest"
-  name: "VM-SelfHosted-Agent"
+  vmImage: "windows-latest"
+  # name: "VM-SelfHosted-Agent"
 
 variables:
   buildPlatform: 'Any CPU'
