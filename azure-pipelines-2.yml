@@ -30,6 +30,12 @@ steps:
     feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '$(solution)'
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
   name: "Test" 
   displayName: "Run Tests"
   inputs:
