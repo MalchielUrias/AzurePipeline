@@ -40,13 +40,13 @@ stages:
                         displayName: 'Download Build Artifacts'
                         artifact: "AzureTestProject"
 
-                      # - task: IISWebAppManagementOnMachineGroup@0
-                      #   name: "StopIIS"
-                      #   displayName: "Stop IIS Website"
-                      #   inputs:
-                      #     IISDeploymentType: 'IISWebsite'
-                      #     ActionIISWebsite: 'StopWebsite'
-                      #     StartStopWebsiteName: '${{ variables.IISWebsiteName }}'
+                      - task: IISWebAppManagementOnMachineGroup@0
+                        name: "StopIIS"
+                        displayName: "Stop IIS Website"
+                        inputs:
+                          IISDeploymentType: 'IISWebsite'
+                          ActionIISWebsite: 'StopWebsite'
+                          StartStopWebsiteName: '${{ variables.IISWebsiteName }}'
 
                       - task: IISWebAppDeploymentOnMachineGroup@0
                         name: "DeployIIS"
