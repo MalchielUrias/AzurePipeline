@@ -16,12 +16,14 @@ resources:
           project: "Azure VM Deployment Pipeline"
           source: "Azure VM Build Pipeline"
           branch: "master"
+          trigger: true 
           
 stages:
     - stage: DeployWebsite
       displayName: "Deploy Website"
       pool:
-        name: "VM-SelfHosted-Agent"
+        vmImage: "windows-latest"
+        # name: "VM-SelfHosted-Agent"
 
       jobs:
       - deployment: DeployWebsite

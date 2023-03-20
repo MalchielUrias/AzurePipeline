@@ -7,8 +7,8 @@ trigger:
 - none
 
 pool:
-  # vmImage: "windows-latest"
-  name: "VM-SelfHosted-Agent"
+  vmImage: "windows-latest"
+  # name: "VM-SelfHosted-Agent"
 
 variables:
   buildPlatform: 'Any CPU'
@@ -28,6 +28,12 @@ steps:
     command: 'restore'
     restoreSolution: '$(solution)'
     feedsToUse: 'select'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '$(solution)'
+    arguments: '--configuration $(BuildConfiguration)'
 
 - task: DotNetCoreCLI@2
   name: "Test" 
