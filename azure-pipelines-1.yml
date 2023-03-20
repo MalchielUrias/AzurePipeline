@@ -21,7 +21,8 @@ stages:
     - stage: DeployWebsite
       displayName: "Deploy Website"
       pool:
-        name: "VM-SelfHosted-Agent"
+        vmImage: "windows-latest"
+        # name: "VM-SelfHosted-Agent"
 
       jobs:
       - deployment: DeployWebsite
