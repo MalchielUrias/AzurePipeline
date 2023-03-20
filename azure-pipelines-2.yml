@@ -50,7 +50,7 @@ steps:
     command: 'publish'
     publishWebProjects: false
     projects: '$(project)'
-    arguments: '--configuration $(BuildConfiguration) --output $(BuildArtifactStagingDirectory))'
+    arguments: '--configuration $(BuildConfiguration) --output $(BuildArtifactStagingDirectory)'
     zipAfterPublish: false
 
 - task: CopyFiles@2
