@@ -16,6 +16,7 @@ resources:
           project: "Azure VM Deployment Pipeline"
           source: "Azure VM Build Pipeline"
           branch: "master"
+          trigger: true 
           
 stages:
     - stage: DeployWebsite
